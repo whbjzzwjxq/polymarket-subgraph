@@ -2,33 +2,29 @@
 
 ## Subgraphs
 
-* activity-subgraph
+- activity-subgraph
 
-* fpmm-subgraph
+- fpmm-subgraph
 
-* oi-subgraph
+- oi-subgraph
 
-* orderbook-subgraph
+- orderbook-subgraph
 
-* pnl-subgraph
+- pnl-subgraph
 
-* polymarket-subgraph
+- sports-oracle-subgraph
 
-* sports-oracle-subgraph
+- wallet-subgraph (broken at matic block 5141000)
 
-## Environment Variables
-
-Create a `.env` file with the following variables:
+## Installing Dependencies
 
 ```bash
-MATIC_RPC_URL=
+yarn
 ```
-
-Here, `MATIC_RPC_URL` should be your RPC URL for the Polygon network. Common providers include Alchemy and Infura.
 
 ## Running the test suite
 
-Run `yarn test` to run the test suite, which will run in a docker container.
+Run `yarn test` to run the test suite, which will run in a docker container. (Broken)
 
 ## Preparing `subgraph.yaml`
 
@@ -36,54 +32,19 @@ Each subgraph has dedicated yarn scripts for convenience.
 
 First, to prepare `subgraph.yaml` and other templated files, run `yarn templatify:matic`.
 
-It's recommended to run the codegen command for the subgraph you're working on, as it will only generate the types and schemas for that subgraph. To do this, run `yarn pnl:codegen`, `yarn activity:codegen` or `yarn polymarket:codegen`.
+It's recommended to run the codegen command for the subgraph you're working on, as it will only generate the types and schemas for that subgraph. To do this, run `yarn pnl:codegen`, `yarn activity:codegen` or `yarn polymarket:codegen`. If you want all subgraphs, run `yarn all:codegen`.
 
 ## Local Deployment
 
-To start the docker environment, run `docker compose up`. Once the environment is ready, create and deploy the subgraph:
-
-```[bash]
-yarn <subgraph>:create-local
-yarn <subgraph>:deploy-local
-```
-
-Access the GraphQL editor at:
-
-[`http://localhost:8000/subgraphs/name/polymarket-subgraph/graphql`](http://localhost:8000/subgraphs/name/polymarket-subgraph/graphql)
-
-**Example query:**
-
-```graphQL
-query tokenIdConditions {
-  tokenIdConditions {
-    id
-    condition
-    complement
-  }
-}
-```
-
-## Restart graph node and clear volumes
+Copy `.env.example` to `.env` and fill in it.
 
 ```bash
-docker compose down
+cp .env.example .env
 ```
 
-```bash
-sudo docker rm polymarket-subgraph-graph-node-1 && sudo docker rm polymarket-subgraph-ipfs-1 && sudo docker rm polymarket-subgraph-postgres-1 && sudo docker rm polymarket-subgraph-ganache-1
-```
+Then, run `docker compose up` to start the environment.
 
-The names of you docker containers may vary; check the terminal.
-
-## Goldsky
-
-Build the subgraph with `yarn <subgraph>:build`, and deploy with:
-
-```bash
-goldsky subgraph deploy <subgraph-name>/<version> --path ./build/
-```
-
-## Running on an M1 Chip
+### Running on an M1 Chip
 
 To run locally on an M1 chip, you'll need to build a local copy of the graph-node docker image. To do this, clone the [graph-node repo](https://github.com/graphprotocol/graph-node) and run the following commands:
 
@@ -99,6 +60,45 @@ docker tag graph-node graphprotocol/graph-node:latest
 ```
 
 Note: you likely will have to increase your Docker daemon memory capacity. In Docker desktop you can find this setting under Settings > Resources > Advanced.
+
+### Deploying subgraphs
+
+Once the docker compose environment is ready, create and deploy the subgraph:
+
+```[bash]
+yarn <subgraph>:create-local
+yarn <subgraph>:deploy-local
+```
+
+Access the GraphQL editor at:
+
+[activity-subgraph](http://localhost:8000/subgraphs/name/activity-subgraph/graphql)
+[pnl-subgraph](http://localhost:8000/subgraphs/name/pnl-subgraph/graphql)
+[oi-subgraph](http://localhost:8000/subgraphs/name/oi-subgraph/graphql)
+[fpmm-subgraph](http://localhost:8000/subgraphs/name/fpmm-subgraph/graphql)
+[orderbook-subgraph](http://localhost:8000/subgraphs/name/orderbook-subgraph/graphql)
+[sports-oracle-subgraph](http://localhost:8000/subgraphs/name/sports-oracle-subgraph/graphql)
+[wallet-subgraph](http://localhost:8000/subgraphs/name/wallet-subgraph/graphql)
+
+### Restart graph node and clear volumes
+
+```bash
+docker compose down
+```
+
+```bash
+sudo docker rm polymarket-subgraph-graph-node-1 && sudo docker rm polymarket-subgraph-ipfs-1 && sudo docker rm polymarket-subgraph-postgres-1 && sudo docker rm polymarket-subgraph-ganache-1
+```
+
+The names of you docker containers may vary; check the terminal.
+
+## Goldsky Deployment
+
+Build the subgraph with `yarn <subgraph>:build`, or use `yarn all:build`, and deploy with:
+
+```bash
+goldsky subgraph deploy <subgraph-name>/<version> --path ./build/
+```
 
 ## Contracts
 

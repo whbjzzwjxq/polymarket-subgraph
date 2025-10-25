@@ -3,7 +3,7 @@ services:
   postgres:
     image: postgres
     environment:
-      POSTGRES_PASSWORD: letmein
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_INITDB_ARGS: '-E UTF8 --locale=C'
 
   ipfs:
@@ -17,7 +17,7 @@ services:
       - '8545:8545'
 
   graph-node:
-    image: graphprotocol/graph-node
+    image: graphprotocol/graph-node:latest
     ports:
       - '8000:8000'
       - '8001:8001'
@@ -28,7 +28,7 @@ services:
       postgres_host: postgres
       postgres_port: 5432
       postgres_user: postgres
-      postgres_pass: letmein
+      postgres_pass: ${POSTGRES_PASSWORD}
       postgres_db: postgres
       ipfs: 'ipfs:5001'
       ethereum: 'matic:${MATIC_RPC_URL}'
